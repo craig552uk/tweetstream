@@ -15,15 +15,24 @@ Data is saved in TSV (tab separated value) format in the configured location.
 
 Tweetstream captures tweets from the live stream only, it does not capture historic tweets.
 
+There's more detailed info in `sample-conf.yaml`.
+
 Installing
 ----------
 
 1. Save `tweetstream` in `~/bin` or somewhere in your path.
-2. Install dependencies
-    $ gem install tweetstream
-2. Create a configuration file
-3. Run it
-    $ tweetstream -c my-conf.yaml
+2. Make it executable
+
+        $ chmod a+x ~/bin/tweetstream
+
+3. Install dependencies
+
+        $ gem install tweetstream
+
+4. Create a configuration file
+5. Run it
+
+        $ tweetstream -c my-conf.yaml
 
 You will need a recent verison of Ruby installed.
 If you don't have this already, [RVM][https://rvm.io/rvm/install/] is probably the easiest way to go.
