@@ -1,0 +1,47 @@
+# Your Twitter API keys
+:oauth:
+  :consumer_key:       XXXX
+  :consumer_secret:    XXXX
+  :oauth_token:        XXXX
+  :oauth_token_secret: XXXX
+
+# A list of keywords to track
+# Tweets are returned matching any of these terms
+# Include @usernames here to catch all mentions
+:keywords:
+ - '@craig552uk'
+ - 'earth'
+ - 'wind'
+ - 'fire'
+ - 'water'
+
+# A list of accounts to follow
+#
+# For each user the following WILL be captured
+# - Tweets created by the user.
+# - Tweets which are retweeted by the user.
+# - Replies to any Tweet created by the user.
+# - Retweets of any Tweet created by the user.
+# - Manual replies, created without pressing a reply button (e.g. “@twitterapi I agree”).
+#
+# These will NOT be captured
+# - Tweets mentioning the user (e.g. “Hello @twitterapi!”).
+# - Manual Retweets created without pressing a Retweet button (e.g. “RT @twitterapi The API is great”).
+# - Tweets by protected users.
+:screen_names:
+  - 'craig552uk'
+
+# Specifies the locations to store status and user data
+# Information is stored tab-delimited in the following format
+#
+# Tweet
+#   id user.screen_name user.name user.id text created_at source
+#
+# User
+#   id screen_name name location url description created_at followers_count listed_count favourites_count statuses_count time_zone lang
+#
+# Files names are as specified, with {DATE} substituted for the current date
+# Absolute paths only
+:save_location:
+  :tweets: '/home/me/twitterstream/tweets.{DATE}.tsv'
+  :users:  '/home/me/twitterstream/users.{DATE}.tsv'
