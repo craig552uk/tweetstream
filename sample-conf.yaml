@@ -31,6 +31,12 @@
 :screen_names:
   - 'craig552uk'
 
+# Exclude any tweets where the text contains these keywords
+# Use this to filter out the spam bots
+:spam_phrases:
+  - 'viagra'
+  - 'webcam'
+
 # Specifies the locations to store status and user data
 # Information is stored tab-delimited in the following format
 #

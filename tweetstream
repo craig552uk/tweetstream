@@ -10,6 +10,7 @@ options[:oauth]         = {}
 options[:keywords]      = []
 options[:screen_names]  = []
 options[:user_ids]      = []
+options[:spam_phrases]  = []
 options[:save_location] = {}
 
 # Get options from command line
@@ -33,6 +34,7 @@ end
 
 # Merge config with options
 options[:oauth]         = config[:oauth]                                      unless config[:oauth].nil?
+options[:spam_phrases]  = config[:spam_phrases]                               unless config[:spam_phrases].nil?
 options[:save_location] = config[:save_location]                              unless config[:save_location].nil?
 options[:keywords]      = options[:keywords].concat     config[:keywords]     unless config[:keywords].nil?
 options[:screen_names]  = options[:screen_names].concat config[:screen_names] unless config[:screen_names].nil?
@@ -58,47 +60,53 @@ begin
   @stream_client = TweetStream::Client.new options[:oauth]
   @stream_client.filter(query) do |status|
 
-    @timestamp = Time.now.strftime('%F %T')
+    # Filter spam
+    unless options[:spam_phrases].any?{ |phrase| status.text.include? phrase}
 
-    unless config[:save_location][:tweets].nil?
-      # Save Tweet
-      t  = []
-      t << status.id
-      t << status.user.screen_name
-      t << status.user.name.gsub(/[\n\r\t]/, '')
-      t << status.user.id
-      t << status.text.gsub(/[\n\r\t]/, '')
-      t << status.created_at
-      t << status.source.scan(/>(.*)</).flatten.first || "web"
+      @timestamp = Time.now.strftime('%F %T')
 
-      filename = config[:save_location][:tweets]
-      filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
-      File.open(filename, 'a') {|f| f.write t.join("\t") + "\n" }
-      puts "[#{@timestamp}] Saved Tweet <#{status.id}> by #{status.user.screen_name}"
+      unless config[:save_location][:tweets].nil?
+        # Save Tweet
+        t  = []
+        t << status.id
+        t << status.user.screen_name
+        t << status.user.name.gsub(/[\n\r\t]/, '')
+        t << status.user.id
+        t << status.text.gsub(/[\n\r\t]/, '')
+        t << status.created_at
+        t << status.source.scan(/>(.*)</).flatten.first || "web"
+
+        filename = config[:save_location][:tweets]
+        filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
+        File.open(filename, 'a') {|f| f.write t.join("\t") + "\n" }
+        puts "[#{@timestamp}] Saved Tweet <#{status.id}> by #{status.user.screen_name}"
+      end
+
+      unless config[:save_location][:users].nil?
+        # Save User
+        u = []
+        u << status.user.id
+        u << status.user.screen_name
+        u << status.user.name
+        u << status.user.location
+        u << status.user.url
+        u << status.user.description.gsub(/[\n\r\t]/, '') || ''
+        u << status.user.created_at
+        u << status.user.followers_count
+        u << status.user.listed_count
+        u << status.user.favourites_count
+        u << status.user.statuses_count
+        u << status.user.time_zone
+        u << status.user.lang
+
+        filename = config[:save_location][:users]
+        filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
+        File.open(filename, 'a') {|f| f.write u.join("\t") + "\n" }
+        puts "[#{@timestamp}] Saved User <#{status.user.id}> #{status.user.screen_name}"
+      end
+
     end
 
-    unless config[:save_location][:users].nil?
-      # Save User
-      u = []
-      u << status.user.id
-      u << status.user.screen_name
-      u << status.user.name
-      u << status.user.location
-      u << status.user.url
-      u << status.user.description.gsub(/[\n\r\t]/, '') || ''
-      u << status.user.created_at
-      u << status.user.followers_count
-      u << status.user.listed_count
-      u << status.user.favourites_count
-      u << status.user.statuses_count
-      u << status.user.time_zone
-      u << status.user.lang
-
-      filename = config[:save_location][:users]
-      filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
-      File.open(filename, 'a') {|f| f.write u.join("\t") + "\n" }
-      puts "[#{@timestamp}] Saved User <#{status.user.id}> #{status.user.screen_name}"
-    end
   end
 rescue Interrupt
   # Exit cleanly with cmd+c
