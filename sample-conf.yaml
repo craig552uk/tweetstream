@@ -47,6 +47,7 @@
 #   id screen_name name location url description created_at followers_count listed_count favourites_count statuses_count time_zone lang
 #
 # Files names are as specified, with {DATE} substituted for the current date
+# Ensure this directory is created before running the script
 # Absolute paths only
 :save_location:
   :tweets: '/home/me/twitterstream/tweets.{DATE}.tsv'
