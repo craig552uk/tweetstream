@@ -58,6 +58,9 @@ puts "Hit cmd+c to exit\n"
 begin
   # Filter tweets from the live stream
   @stream_client = TweetStream::Client.new options[:oauth]
+  @stream_client.on_error do |error|
+    puts error.inspect
+  end
   @stream_client.filter(query) do |status|
 
     # Filter spam
@@ -70,15 +73,18 @@ begin
         t  = []
         t << status.id
         t << status.user.screen_name
-        t << status.user.name.gsub(/[\n\r\t]/, '')
+        t << status.user.name
         t << status.user.id
-        t << status.text.gsub(/[\n\r\t]/, '')
+        t << status.user.profile_image_url
+        t << status.text
         t << status.created_at
         t << status.source.scan(/>(.*)</).flatten.first || "web"
 
+        t.map!{ |e| e.to_s.gsub(/[\r\t\n\|]/,'') }
+
         filename = config[:save_location][:tweets]
         filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
-        File.open(filename, 'a') {|f| f.write t.join("\t") + "\n" }
+        File.open(filename, 'a') {|f| f.write t.join("|") + "\n" }
         puts "[#{@timestamp}] Saved Tweet <#{status.id}> by #{status.user.screen_name}"
       end
 
@@ -90,7 +96,8 @@ begin
         u << status.user.name
         u << status.user.location
         u << status.user.url
-        u << status.user.description.gsub(/[\n\r\t]/, '') || ''
+        u << status.user.description || ''
+        u << status.user.profile_image_url
         u << status.user.created_at
         u << status.user.followers_count
         u << status.user.listed_count
@@ -99,9 +106,11 @@ begin
         u << status.user.time_zone
         u << status.user.lang
 
+        u.map!{ |e| e.to_s.gsub(/[\r\t\n\|]/,'') }
+
         filename = config[:save_location][:users]
         filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
-        File.open(filename, 'a') {|f| f.write u.join("\t") + "\n" }
+        File.open(filename, 'a') {|f| f.write u.join("|") + "\n" }
         puts "[#{@timestamp}] Saved User <#{status.user.id}> #{status.user.screen_name}"
       end
 

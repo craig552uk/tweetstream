@@ -50,5 +50,5 @@
 # Ensure this directory is created before running the script
 # Absolute paths only
 :save_location:
-  :tweets: '/home/me/twitterstream/tweets.{DATE}.tsv'
-  :users:  '/home/me/twitterstream/users.{DATE}.tsv'
+  :tweets: '/home/me/twitterstream/tweets.{DATE}.data'
+  :users:  '/home/me/twitterstream/users.{DATE}.data'
