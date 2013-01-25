@@ -2,6 +2,7 @@
 require 'tweetstream'
 require 'optparse'
 require 'yaml'
+require 'csv'
 
 # Default options
 options = {}
@@ -69,22 +70,24 @@ begin
       @timestamp = Time.now.strftime('%F %T')
 
       unless config[:save_location][:tweets].nil?
+
         # Save Tweet
         t  = []
         t << status.id
-        t << status.user.screen_name
-        t << status.user.name
-        t << status.user.id
-        t << status.user.profile_image_url
-        t << status.text
         t << status.created_at
+        t << status.in_reply_to_status_id
+        t << status.in_reply_to_user_id
+        t << status.user.id
+        t << status.user.screen_name
         t << status.source.scan(/>(.*)</).flatten.first || "web"
+        t << status.text
 
-        t.map!{ |e| e.to_s.gsub(/[\r\t\n\|]/,'') }
+        t.map!{ |e| e.to_s.gsub(/[\r\t\n]/,'').gsub(/\"/,'$quot;') }
+        csv_str = t.to_csv(:force_quotes => true)
 
         filename = config[:save_location][:tweets]
         filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
-        File.open(filename, 'a') {|f| f.write t.join("|") + "\n" }
+        File.open(filename, 'a') {|f| f.write csv_str }
         puts "[#{@timestamp}] Saved Tweet <#{status.id}> by #{status.user.screen_name}"
       end
 
@@ -106,11 +109,12 @@ begin
         u << status.user.time_zone
         u << status.user.lang
 
-        u.map!{ |e| e.to_s.gsub(/[\r\t\n\|]/,'') }
+        u.map!{ |e| e.to_s.gsub(/[\r\t\n\|]/,'').gsub(/\"/,'$quot;') }
+        csv_str = u.to_csv(:force_quotes => true)
 
         filename = config[:save_location][:users]
         filename = filename.gsub(/\{DATE\}/, status.created_at.strftime('%F'))
-        File.open(filename, 'a') {|f| f.write u.join("|") + "\n" }
+        File.open(filename, 'a') {|f| f.write csv_str }
         puts "[#{@timestamp}] Saved User <#{status.user.id}> #{status.user.screen_name}"
       end
 
