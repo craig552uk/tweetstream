@@ -11,7 +11,7 @@ Run it like this:
 
 See `sample-conf.yaml` for a config template.
 
-Data is saved in text delimited file (using | as the delimiter) in the configured location.
+Data is saved in a CSV file (with quoted fields) in the configured location.
 
 Tweetstream captures tweets from the live stream only, it does not capture historic tweets.
 
