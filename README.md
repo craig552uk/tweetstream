@@ -35,4 +35,4 @@ Installing
         $ tweetstream -c my-conf.yaml
 
 You will need a recent verison of Ruby installed.
-If you don't have this already, [RVM][https://rvm.io/rvm/install/] is probably the easiest way to go.
+If you don't have this already, [RVM](https://rvm.io/rvm/install/) is probably the easiest way to go.
