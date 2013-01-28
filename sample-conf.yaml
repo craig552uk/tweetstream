@@ -38,7 +38,7 @@
   - 'webcam'
 
 # Specifies the locations to store status and user data
-# Information is stored tab-delimited in the following format
+# Information is stored as CSV witht he following fields
 #
 # Tweet
 #   id user.screen_name user.name user.id text created_at source
@@ -50,5 +50,5 @@
 # Ensure this directory is created before running the script
 # Absolute paths only
 :save_location:
-  :tweets: '/home/me/twitterstream/tweets.{DATE}.data'
-  :users:  '/home/me/twitterstream/users.{DATE}.data'
+  :tweets: '/home/me/twitterstream/tweets.{DATE}.csv'
+  :users:  '/home/me/twitterstream/users.{DATE}.csv'
